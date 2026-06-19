@@ -6,7 +6,7 @@ import { RegisterDto, SentOtpDto, SignInDto, VerifyOtpDto } from './dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Post("sent-otp")
+  @Post("sent-otpp")
   sentOtp(@Body() sentOtpDto: SentOtpDto) {
     return this.authService.sentOtp(sentOtpDto);
   }
