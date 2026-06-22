@@ -1,29 +1,36 @@
-import { Controller, Get, Post, Body, } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto, SentOtpDto, SignInDto, VerifyOtpDto } from './dto';
+import { CurrentUser, JwtAuthGuard } from '@common';
+import { UsersEntity } from '@database';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
-  @Post("sent-otpp")
+  @Post('sent-otpp')
   sentOtp(@Body() sentOtpDto: SentOtpDto) {
     return this.authService.sentOtp(sentOtpDto);
   }
 
-  @Post("verify-otp")
+  @Post('verify-otp')
   verifyOtp(@Body() verifyOtpdto: VerifyOtpDto) {
     return this.authService.verifyOtp(verifyOtpdto);
   }
 
-  @Post("register")
+  @Post('register')
   create(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
-  @Post("login")
+  @Get('logout')
+  signout(@CurrentUser() user: UsersEntity) {
+    return this.authService.signOut(user.id);
+  }
+
+  @Post('login')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
   }
-
 }

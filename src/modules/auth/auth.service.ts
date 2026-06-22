@@ -139,6 +139,21 @@ export class AuthService {
     };
   }
 
+  async signOut(user_id: number) {
+    const existingToken = await this.refreshTokensRepository.findOne({
+      where: { user_id, revoked: false },
+    });
+
+    if (!existingToken) {
+      throw new BadRequestException('token not found');
+    }
+
+    existingToken.revoked = true;
+    await this.refreshTokensRepository.save(existingToken);
+
+    return { message: 'Signed out successfully' };
+  }
+
   private generateTokenForOtp(email: string) {
     return this.jwtService.sign(
       { email, purpose: 'register' },
