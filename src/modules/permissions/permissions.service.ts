@@ -33,6 +33,6 @@ export class PermissionsService {
 
   async remove(id: number) {
     await this.findOne(id)
-    return await this.permissionRepository.softDelete(id)
+    return await this.permissionRepository.delete(id)
   }
 }

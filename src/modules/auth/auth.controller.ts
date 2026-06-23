@@ -1,6 +1,12 @@
 import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, SentOtpDto, SignInDto, VerifyOtpDto } from './dto';
+import {
+  RefreshTokenDto,
+  RegisterDto,
+  SentOtpDto,
+  SignInDto,
+  VerifyOtpDto,
+} from './dto';
 import { CurrentUser, JwtAuthGuard } from '@common';
 import { UsersEntity } from '@database';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -24,13 +30,20 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
+  @Post('login')
+  signIn(@Body() signInDto: SignInDto) {
+    return this.authService.signIn(signInDto);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('logout')
   signout(@CurrentUser() user: UsersEntity) {
     return this.authService.signOut(user.id);
   }
 
-  @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto);
+  @Post('refresh')
+  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto);
   }
 }

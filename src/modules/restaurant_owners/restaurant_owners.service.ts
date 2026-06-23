@@ -37,6 +37,6 @@ export class RestaurantOwnersService {
 
   async remove(id: number) {
     await this.findOne(id)
-    return await this.restaurantOwnersRepository.softDelete(id);
+    return await this.restaurantOwnersRepository.delete(id);
   }
 }

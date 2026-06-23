@@ -5,6 +5,7 @@ import { CustomersEntity } from './customer.entity';
 import { Exclude } from 'class-transformer';
 import { CouriersEntity } from './courier.entity';
 import { RestaurantOwnersEntity } from './restaurant_owner.entity';
+import { AdminsEntity } from './admin.entity';
 
 @Entity({ name: 'users' })
 export class UsersEntity extends AbstractEntity {
@@ -30,6 +31,9 @@ export class UsersEntity extends AbstractEntity {
 
   @OneToOne(() => CouriersEntity, (courier) => courier.user)
   courier: CouriersEntity;
+
+  @OneToOne(() => AdminsEntity, (admin) => admin.user)
+  admin: AdminsEntity;
 
   @OneToOne(
     () => RestaurantOwnersEntity,

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  AdminsEntity,
   CouriersEntity,
   CustomersEntity,
   RestaurantOwnersEntity,
@@ -47,7 +48,12 @@ export class UsersService {
         hashed_password,
         role_id: role.id,
         email,
-        is_active: role.name === USER_ROLE_ENUM.CUSTOMER ? true : false,
+        is_active:
+          role.name === USER_ROLE_ENUM.CUSTOMER ||
+          role.name === USER_ROLE_ENUM.ADMIN ||
+          role.name === USER_ROLE_ENUM.SUPERADMIN
+            ? true
+            : false,
         ...data,
       });
 
@@ -70,13 +76,41 @@ export class UsersService {
           user_id: newUser.id,
         });
       }
+      if (
+        role.name === USER_ROLE_ENUM.ADMIN ||
+        role.name === USER_ROLE_ENUM.SUPERADMIN
+      ) {
+        await manager.save(AdminsEntity, {
+          name: data.name,
+          user_id: newUser.id,
+        });
+      }
       return newUser;
     });
     return user;
   }
 
   async findAll() {
-    return await this.usersRepository.find();
+    const users = await this.usersRepository.find({
+      relations: {
+        role: true,
+        admin: true,
+        courier: true,
+        customer: true,
+        restaurant_owner: true,
+      },
+    });
+    return users.map((user) => {
+      const { admin, courier, customer, restaurant_owner, role, ...rest } =
+        user;
+      const roleName = role.name;
+
+      return {
+        ...rest,
+        role: roleName,
+        [roleName]: user[roleName],
+      };
+    });
   }
 
   async findOneByEmail(email: string) {
@@ -87,20 +121,49 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.usersRepository.findOne({ where: { id } });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: {
+        role: { permissions: true },
+        admin: true,
+        courier: true,
+        customer: true,
+        restaurant_owner: true,
+      },
+    });
     if (!user) {
       throw new NotFoundException('user not found');
     }
-    return user;
+    const { admin, courier, customer, restaurant_owner, role, ...rest } = user;
+    const roleName = role.name;
+
+    return {
+      ...rest,
+      role: roleName,
+      permissions: role.permissions,
+      [roleName]: user[roleName],
+    };
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    await this.findOne(id);
-    return await this.usersRepository.update(id, updateUserDto);
+  async activateUser(id: number) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.is_active) {
+      throw new BadRequestException('User already activated');
+    }
+
+    user.is_active = true;
+    await this.usersRepository.save(user);
+
+    return { message: 'User activated successfully' };
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    return await this.usersRepository.softDelete(id);
+    return await this.usersRepository.delete(id);
   }
 }

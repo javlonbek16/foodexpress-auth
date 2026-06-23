@@ -40,6 +40,6 @@ export class CouriersService {
 
   async remove(id: number) {
     await this.findOne(id)
-    return await this.couriersRepository.softDelete(id);
+    return await this.couriersRepository.delete(id);
   }
 }

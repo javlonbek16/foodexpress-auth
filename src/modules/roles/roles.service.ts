@@ -7,7 +7,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PermissionsEntitiy, RolesEntity } from '@database';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { USER_ROLE_ENUM } from '@common';
 
 @Injectable()
@@ -25,7 +25,6 @@ export class RolesService {
     const permissions = await this.permissionRepository.findBy({
       id: In(permission_ids),
     });
-    console.log(permissions);
 
     if (permissions.length !== permission_ids.length) {
       throw new BadRequestException('One or more permissions not found');
@@ -39,7 +38,23 @@ export class RolesService {
   }
 
   async findAll() {
-    return await this.rolesRepository.find();
+    return await this.rolesRepository.find({
+      relations: { permissions: true },
+    });
+  }
+
+  async findAllForClient() {
+    return await this.rolesRepository.find({
+      where: {
+        name: Not(
+          In([
+            USER_ROLE_ENUM.ADMIN,
+            USER_ROLE_ENUM.SUPERADMIN,
+            USER_ROLE_ENUM.CUSTOMER,
+          ]),
+        ),
+      },
+    });
   }
 
   async findOneByName(name: USER_ROLE_ENUM) {
@@ -82,6 +97,6 @@ export class RolesService {
 
   async remove(id: number) {
     await this.findOne(id);
-    return await this.rolesRepository.softDelete(id);
+    return await this.rolesRepository.delete(id);
   }
 }

@@ -3,8 +3,15 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { RegisterDto, SentOtpDto, SignInDto, VerifyOtpDto } from './dto';
+import {
+  RefreshTokenDto,
+  RegisterDto,
+  SentOtpDto,
+  SignInDto,
+  VerifyOtpDto,
+} from './dto';
 import { MailService } from 'modules/mail';
 import { Repository } from 'typeorm';
 import { OtpEntity, RefreshTokensEntity, UsersEntity } from '@database';
@@ -145,13 +152,72 @@ export class AuthService {
     });
 
     if (!existingToken) {
-      throw new BadRequestException('token not found');
+      throw new BadRequestException('token is revoked');
     }
 
     existingToken.revoked = true;
     await this.refreshTokensRepository.save(existingToken);
 
     return { message: 'Signed out successfully' };
+  }
+
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    const { user_id, refresh_token } = refreshTokenDto;
+    let decoded: any;
+    try {
+      decoded = this.jwtService.verify(refresh_token, {
+        secret: process.env.JWT_REFRESH_SECRET_KEY,
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token expired or invalid');
+    }
+
+    if (decoded.user_id !== user_id) {
+      throw new ForbiddenException('Token does not belong to this user');
+    }
+
+    const existingToken = await this.refreshTokensRepository.findOne({
+      where: { user_id, revoked: false },
+    });
+
+    if (!existingToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+
+    if (existingToken.expires_at < new Date()) {
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
+    const isMatch = await bcrypt.compare(
+      refresh_token,
+      existingToken.hashed_token,
+    );
+    if (!isMatch) {
+      throw new ForbiddenException('Invalid refresh token');
+    }
+
+    const user = await this.usersService.findOne(user_id);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const tokens = await this.generateAccessRefreshTokens(user);
+    const hashed_token = await bcrypt.hash(tokens.refresh_token, 7);
+
+    existingToken.hashed_token = hashed_token;
+    existingToken.expires_at = tokens.refresh_expires_at;
+    await this.refreshTokensRepository.save(existingToken);
+
+    return {
+      user_id: user.id,
+      role: user.role,
+      permissions: user.permissions.map((p) => ({
+        id: p.id,
+        code: p.code,
+      })),
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
   }
 
   private generateTokenForOtp(email: string) {
@@ -171,7 +237,7 @@ export class AuthService {
     }
   }
 
-  async generateAccessRefreshTokens(user: UsersEntity) {
+  async generateAccessRefreshTokens(user: any) {
     const payload = {
       user_id: user.id,
       role: user.role.name,
@@ -180,13 +246,14 @@ export class AuthService {
     };
 
     const [access_token, refresh_token] = await Promise.all([
-      this.jwtService.signAsync(payload, {
+      this.jwtService.signAsync({ ...payload }, {
         secret: process.env.JWT_ACCESS_SECRET_KEY,
-        expiresIn: process.env.JWT_ACCESS_TTL,
+        expiresIn: Number(process.env.JWT_ACCESS_TTL),
       } as JwtSignOptions),
-      this.jwtService.signAsync(payload, {
+
+      this.jwtService.signAsync({ ...payload }, {
         secret: process.env.JWT_REFRESH_SECRET_KEY,
-        expiresIn: process.env.JWT_REFRESH_TTL,
+        expiresIn: Number(process.env.JWT_REFRESH_TTL),
       } as JwtSignOptions),
     ]);
 

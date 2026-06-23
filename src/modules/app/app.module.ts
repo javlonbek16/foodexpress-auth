@@ -1,7 +1,8 @@
 import { DatabaseModule } from '@database';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from 'modules/auth';
+import { AdminsModule } from 'modules/admins';
+import { AuthModule, JwtStrategy } from 'modules/auth';
 import { CouriersModule } from 'modules/couriers';
 import { CustomersModule } from 'modules/customers';
 import { PermissionsModule } from 'modules/permissions';
@@ -19,9 +20,10 @@ import { UsersModule } from 'modules/users';
     AuthModule,
     CustomersModule,
     CouriersModule,
-    RestaurantOwnersModule
+    RestaurantOwnersModule,
+    AdminsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [JwtStrategy],
 })
-export class AppModule { }
+export class AppModule {}

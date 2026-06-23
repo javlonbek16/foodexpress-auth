@@ -7,7 +7,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly userService: UsersService,
   ) {
     super({
@@ -18,10 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const user = await this.userService.findOne(payload.user_id);
-    
+
     if (!user || !user.is_active) {
-      throw new UnauthorizedException("ddddddddddd");
+      throw new UnauthorizedException();
     }
+
     return user;
   }
 }

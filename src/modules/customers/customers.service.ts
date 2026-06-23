@@ -39,6 +39,6 @@ export class CustomersService {
 
   async remove(id: number) {
     await this.findOne(id)
-    return await this.customersRepository.softDelete(id);
+    return await this.customersRepository.delete(id);
   }
 }
