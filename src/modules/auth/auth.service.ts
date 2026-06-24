@@ -136,8 +136,9 @@ export class AuthService {
 
     return {
       user_id: user.id,
-      role: user.role.name,
-      permissions: user.role.permissions.map((p) => ({
+      name: user.roleName.name,
+      role: user.role,
+      permissions: user.permissions.map((p) => ({
         id: p.id,
         code: p.code,
       })),

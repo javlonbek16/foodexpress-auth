@@ -104,20 +104,51 @@ export class UsersService {
       const { admin, courier, customer, restaurant_owner, role, ...rest } =
         user;
       const roleName = role.name;
+      const profile =
+        user.admin ??
+        user.customer ??
+        user.restaurant_owner ??
+        user.admin ??
+        user.courier ??
+        null;
 
       return {
         ...rest,
         role: roleName,
-        [roleName]: user[roleName],
+        [roleName]: profile,
       };
     });
   }
 
   async findOneByEmail(email: string) {
-    return await this.usersRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: { email },
-      relations: { role: { permissions: true } },
+      relations: {
+        role: { permissions: true },
+        admin: true,
+        courier: true,
+        customer: true,
+        restaurant_owner: true,
+      },
     });
+    if (!user) return null;
+
+    const { admin, courier, customer, restaurant_owner, role, ...rest } = user;
+    const roleName = role.name;
+    const profile =
+      user.admin ??
+      user.customer ??
+      user.restaurant_owner ??
+      user.admin ??
+      user.courier ??
+      null;
+
+    return {
+      ...rest,
+      role: roleName,
+      permissions: role.permissions,
+      roleName: profile,
+    };
   }
 
   async findOne(id: number) {
@@ -136,12 +167,19 @@ export class UsersService {
     }
     const { admin, courier, customer, restaurant_owner, role, ...rest } = user;
     const roleName = role.name;
+    const profile =
+      user.admin ??
+      user.customer ??
+      user.restaurant_owner ??
+      user.admin ??
+      user.courier ??
+      null;
 
     return {
       ...rest,
       role: roleName,
       permissions: role.permissions,
-      [roleName]: user[roleName],
+      [roleName]: profile,
     };
   }
 
