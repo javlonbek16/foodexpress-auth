@@ -41,9 +41,9 @@ export class UsersController {
     return this.usersService.roleUpdate(updateUserRoleDto);
   }
 
-  @ApiBearerAuth()
-  @Roles(USER_ROLE_ENUM.SUPERADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @ApiBearerAuth()
+  // @Roles(USER_ROLE_ENUM.SUPERADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

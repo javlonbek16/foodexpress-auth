@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Matches } from 'class-validator';
 
 export class SentOtpDto {
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsEmail()
-    email: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9._%+-]+@gmail\.com$/, {
+    message: 'Only Gmail addresses are accepted (@gmail.com)',
+  })
+  email: string;
 }

@@ -11,16 +11,12 @@ import {
 import { CustomersService } from './customers.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateCustomerDto, UpdateCustomerDto } from './dto';
+import { JwtAuthGuard, Roles, RolesGuard, USER_ROLE_ENUM } from '@common';
 
 @ApiTags('Customers')
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
-
-  @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customersService.create(createCustomerDto);
-  }
 
   @Get()
   findAll() {

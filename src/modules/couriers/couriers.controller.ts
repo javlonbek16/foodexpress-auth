@@ -1,17 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CouriersService } from './couriers.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateCourierDto, UpdateCourierDto } from './dto';
+import { UpdateCourierDto } from './dto';
 
-@ApiTags("Couriers")
+@ApiTags('Couriers')
 @Controller('couriers')
 export class CouriersController {
-  constructor(private readonly couriersService: CouriersService) { }
-
-  @Post()
-  create(@Body() createCourierDto: CreateCourierDto) {
-    return this.couriersService.create(createCourierDto);
-  }
+  constructor(private readonly couriersService: CouriersService) {}
 
   @Get()
   findAll() {
