@@ -18,9 +18,9 @@ import { JwtAuthGuard, Roles, RolesGuard, USER_ROLE_ENUM } from '@common';
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
-  // @ApiBearerAuth()
-  // @Roles(USER_ROLE_ENUM.SUPERADMIN)
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Roles(USER_ROLE_ENUM.SUPERADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminsService.create(createAdminDto);
