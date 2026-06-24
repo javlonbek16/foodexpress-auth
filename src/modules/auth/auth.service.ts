@@ -146,6 +146,11 @@ export class AuthService {
     };
   }
 
+  async getMe(id: number) {
+    const user = await this.usersService.findOne(id);
+    return user;
+  }
+
   async signOut(user_id: number) {
     const existingToken = await this.refreshTokensRepository.findOne({
       where: { user_id, revoked: false },

@@ -12,7 +12,7 @@ import {
   UsersEntity,
 } from '@database';
 import { DataSource, Repository } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserRoleDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { RolesService } from 'modules/roles';
 import { USER_ROLE_ENUM } from '@common';
@@ -143,6 +143,20 @@ export class UsersService {
       permissions: role.permissions,
       [roleName]: user[roleName],
     };
+  }
+
+  async roleUpdate(updateUserRoleDto: UpdateUserRoleDto) {
+    const { user_id, role_id } = updateUserRoleDto;
+
+    const user = await this.usersRepository.findOne({ where: { id: user_id } });
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    const role = await this.rolesService.findOne(role_id);
+    user.role_id = role.id;
+
+    return await this.usersRepository.save(user);
   }
 
   async activateUser(id: number) {

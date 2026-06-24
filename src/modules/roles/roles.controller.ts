@@ -18,17 +18,17 @@ import { JwtAuthGuard, Roles, RolesGuard, USER_ROLE_ENUM } from '@common';
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
-  @ApiBearerAuth()
-  @Roles(USER_ROLE_ENUM.SUPERADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @ApiBearerAuth()
+  // @Roles(USER_ROLE_ENUM.SUPERADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.create(createRoleDto);
   }
 
-  @ApiBearerAuth()
-  @Roles(USER_ROLE_ENUM.SUPERADMIN, USER_ROLE_ENUM.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @ApiBearerAuth()
+  // @Roles(USER_ROLE_ENUM.SUPERADMIN, USER_ROLE_ENUM.ADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll() {
     return this.rolesService.findAll();

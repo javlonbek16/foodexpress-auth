@@ -15,7 +15,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('sent-otpp')
+  @Post('sent-otp')
   sentOtp(@Body() sentOtpDto: SentOtpDto) {
     return this.authService.sentOtp(sentOtpDto);
   }
@@ -33,6 +33,13 @@ export class AuthController {
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(@CurrentUser() currenUser: UsersEntity) {
+    return this.authService.getMe(currenUser.id);
   }
 
   @ApiBearerAuth()
