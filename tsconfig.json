@@ -15,18 +15,11 @@
     "outDir": "./dist",
     "baseUrl": "src",
     "paths": {
-      "@common": [
-        "./common"
-      ],
-      "@database": [
-        "./database"
-      ],
-      "@modules": [
-        "./modules"
-      ],
-      "@utils": [
-        "./utils"
-      ],
+      "@common": ["./common"],
+      "@config": ["./config"],
+      "@database": ["./database"],
+      "@modules": ["./modules"],
+      "@utils": ["./utils"]
     },
     "incremental": true,
     "skipLibCheck": true,

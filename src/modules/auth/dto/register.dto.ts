@@ -16,9 +16,10 @@ export class RegisterDto {
 
   @ApiProperty({ type: String })
   @IsNotEmpty()
-  @Matches(/^[a-zA-Z0-9._%+-]+@gmail\.com$/, {
-    message: 'Only Gmail addresses are accepted (@gmail.com)',
-  })
+  //   @Matches(/^[a-zA-Z0-9._%+-]+@gmail\.com$/, {
+  //     message: 'Only Gmail addresses are accepted (@gmail.com)',
+  //   })
+  @IsEmail()
   email: string;
 
   @ApiProperty({ type: String })
