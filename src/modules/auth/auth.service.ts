@@ -246,8 +246,11 @@ export class AuthService {
   async generateAccessRefreshTokens(user: any) {
     const payload = {
       user_id: user.id,
-      role: user.role.name,
-      permissions: user.role.permissions,
+      role: user.role,
+      permissions: user.permissions?.map((p: any) => ({
+        id: p.id,
+        code: p.code,
+      })),
       iss: 'foodexpress-auth',
     };
 
