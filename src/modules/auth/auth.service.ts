@@ -127,7 +127,7 @@ export class AuthService {
     const tokens = await this.generateAccessRefreshTokens(user);
 
     const hashed_token = await bcrypt.hash(tokens.refresh_token, 7);
-
+    await this.refreshTokensRepository.delete({ user_id: user.id });
     await this.refreshTokensRepository.save({
       user_id: user.id,
       hashed_token,
