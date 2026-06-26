@@ -44,7 +44,7 @@ export class AuthController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Get('logout')
+  @Post('logout')
   signout(@CurrentUser() user: UsersEntity) {
     return this.authService.signOut(user.id);
   }
