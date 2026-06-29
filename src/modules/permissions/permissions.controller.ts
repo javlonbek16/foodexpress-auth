@@ -18,9 +18,9 @@ import { JwtAuthGuard, Roles, RolesGuard, USER_ROLE_ENUM } from '@common';
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  @ApiBearerAuth()
-  @Roles(USER_ROLE_ENUM.SUPERADMIN, USER_ROLE_ENUM.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @ApiBearerAuth()
+  // @Roles(USER_ROLE_ENUM.SUPERADMIN, USER_ROLE_ENUM.ADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   create(@Body() createPermissionDto: CreatePermissionDto) {
     return this.permissionsService.create(createPermissionDto);
