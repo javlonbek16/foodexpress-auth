@@ -1,11 +1,15 @@
 import { AbstractEntity } from 'database/abstract.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
 import { UsersEntity } from './user.entity';
 
 @Entity({ name: 'admins' })
+@Index(['user_id'])
 export class AdminsEntity extends AbstractEntity {
   @Column({ type: 'varchar' })
   name: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  phone_number: string;
 
   @Column({ type: 'int' })
   user_id: number;

@@ -1,8 +1,9 @@
 import { AbstractEntity } from 'database/abstract.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { UsersEntity } from './user.entity';
 
 @Entity({ name: 'refresh_tokens' })
+@Index(['user_id'])
 export class RefreshTokensEntity extends AbstractEntity {
   @Column({ type: 'int' })
   user_id: number;

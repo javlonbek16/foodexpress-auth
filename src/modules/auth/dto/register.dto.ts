@@ -27,6 +27,11 @@ export class RegisterDto {
   @IsString()
   password: string;
 
+  @ApiProperty({ type: String })
+  @IsOptional()
+  @IsString()
+  phone_number: string;
+
   @ApiProperty({ type: Number })
   @IsOptional()
   @IsNumber()

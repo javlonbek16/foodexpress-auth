@@ -1,5 +1,12 @@
 import { AbstractEntity } from 'database/abstract.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+} from 'typeorm';
 import { RolesEntity } from './role.entity';
 import { CustomersEntity } from './customer.entity';
 import { Exclude } from 'class-transformer';
@@ -8,6 +15,7 @@ import { RestaurantOwnersEntity } from './restaurant_owner.entity';
 import { AdminsEntity } from './admin.entity';
 
 @Entity({ name: 'users' })
+@Index(['email'])
 export class UsersEntity extends AbstractEntity {
   @Column({ type: 'varchar', unique: true })
   email: string;
