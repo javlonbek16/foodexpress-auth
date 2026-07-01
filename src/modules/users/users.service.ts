@@ -180,6 +180,7 @@ export class UsersService {
       email: user.email,
       phone_number: profile.phone_number,
       role: roleName,
+      is_active: rest.is_active,
       permissions: role.permissions,
     };
   }
