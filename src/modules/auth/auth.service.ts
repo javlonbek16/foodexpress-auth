@@ -17,7 +17,7 @@ import { Repository } from 'typeorm';
 import { OtpEntity, RefreshTokensEntity, UsersEntity } from '@database';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'modules/users';
-import { RandomCodeGenerate } from '@utils';
+import { formatWaitTime, RandomCodeGenerate } from '@utils';
 import * as bcrypt from 'bcrypt';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 
@@ -38,6 +38,17 @@ export class AuthService {
     const existUser = await this.usersService.findOneByEmail(email);
     if (existUser) {
       throw new BadRequestException('user already exists');
+    }
+    const existedOtp = await this.otpRepository.findOne({ where: { email } });
+    if (existedOtp) {
+      const now = Date.now();
+      const expires_at = new Date(existedOtp.expires_at).getTime();
+      if (now < expires_at) {
+        const waitSeconds = Math.ceil((expires_at - now) / 1000);
+        throw new BadRequestException(
+          `Please wait ${formatWaitTime(waitSeconds)} seconds before requesting a new code`,
+        );
+      }
     }
 
     const code = RandomCodeGenerate();
