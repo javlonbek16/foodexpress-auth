@@ -171,15 +171,16 @@ export class UsersService {
       user.admin ??
       user.customer ??
       user.restaurant_owner ??
-      user.admin ??
       user.courier ??
       null;
 
     return {
-      ...rest,
+      user_id: rest.id,
+      name: profile.name,
+      email: user.email,
+      phone_number: profile.phone_number,
       role: roleName,
       permissions: role.permissions,
-      [roleName]: profile,
     };
   }
 

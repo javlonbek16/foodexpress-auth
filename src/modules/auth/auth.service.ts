@@ -230,7 +230,7 @@ export class AuthService {
     await this.refreshTokensRepository.save(existingToken);
 
     return {
-      user_id: user.id,
+      user_id: user.user_id,
       role: user.role,
       permissions: user.permissions.map((p) => ({
         id: p.id,
