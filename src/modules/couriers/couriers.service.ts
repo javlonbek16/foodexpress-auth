@@ -15,7 +15,7 @@ export class CouriersService {
   ) { }
   async create(createCourierDto: CreateCourierDto) {
     const user = await this.userService.findOne(createCourierDto.user_id)
-    return await this.couriersRepository.save({ name: createCourierDto.name, user_id: user.id });
+    return await this.couriersRepository.save({ name: createCourierDto.name, user_id: user.user_id });
   }
 
   async findAll() {

@@ -14,7 +14,7 @@ export class CustomersService {
   ) { }
   async create(createCustomerDto: CreateCustomerDto) {
     const user = await this.userService.findOne(createCustomerDto.user_id)
-    return await this.customersRepository.save({ name: createCustomerDto.name, user_id: user.id });
+    return await this.customersRepository.save({ name: createCustomerDto.name, user_id: user.user_id });
   }
 
   async findAll() {

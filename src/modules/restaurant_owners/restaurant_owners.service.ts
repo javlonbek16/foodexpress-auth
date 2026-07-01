@@ -14,7 +14,7 @@ export class RestaurantOwnersService {
   ) { }
   async create(createRestaurantOwnerDto: CreateRestaurantOwnerDto) {
     const user = await this.userService.findOne(createRestaurantOwnerDto.user_id)
-    return await this.restaurantOwnersRepository.save({ name: createRestaurantOwnerDto.name, user_id: user.id });
+    return await this.restaurantOwnersRepository.save({ name: createRestaurantOwnerDto.name, user_id: user.user_id });
   }
 
   async findAll() {
