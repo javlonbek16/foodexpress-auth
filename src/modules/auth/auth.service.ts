@@ -110,11 +110,14 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { otpToken, ...data } = registerDto;
     const payload = this.verifyOtpToken(otpToken);
+    console.log('verifyotptoken');
 
     if (payload.purpose !== 'register' || payload.email !== registerDto.email) {
       throw new BadRequestException("This email and otpToken doesn't match");
     }
     const user = await this.usersService.create(data);
+    console.log('user create boldi');
+
     return user;
   }
 
