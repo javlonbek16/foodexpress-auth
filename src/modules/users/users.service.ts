@@ -40,8 +40,6 @@ export class UsersService {
     if (!role) {
       throw new BadRequestException('role not found');
     }
-    console.log("roledan o'tdi");
-    
 
     const hashed_password = await bcrypt.hash(password, 7);
 
