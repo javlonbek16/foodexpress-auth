@@ -28,7 +28,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         },
 
         // Logging configuration
-        logging: ['warn', 'error'],
+        logging: ['query', 'warn', 'error'],
         logger: 'advanced-console',
       }),
     }),
