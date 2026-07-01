@@ -38,8 +38,8 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getMe(@CurrentUser() currenUser: UsersEntity) {
-    return this.authService.getMe(currenUser.id);
+  getMe(@CurrentUser() currentUser: any) {
+    return this.authService.getMe(currentUser.user_id);
   }
 
   @ApiBearerAuth()
